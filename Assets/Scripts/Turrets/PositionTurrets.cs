@@ -11,6 +11,7 @@ public class PositionTurrets : MonoBehaviour
     public float maxDistance = 15;
     public float minDistance = 1;
 
+    private MovePotato potatoController;
     private TurretManager turretManager;
     private Vector3 mousePosition = Vector3.zero;
     private Vector3 mouseDownPosition = Vector3.zero;
@@ -40,12 +41,13 @@ public class PositionTurrets : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-
+        potatoController = player.GetComponent<MovePotato>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Get mouse input, and determine if the mouse has been clicked
         mousePosition = CrossPlatformInputManager.mousePosition;
         bool mouseUp = CrossPlatformInputManager.GetButtonUp("Fire1");
         bool mouseDown = CrossPlatformInputManager.GetButtonDown("Fire1");
@@ -58,6 +60,8 @@ public class PositionTurrets : MonoBehaviour
             }
         } else if (mouseUp)
         {
+            // Make sure the down and up where in the same position
+            // May need to make this less sensitive
             if ( mousePosition == mouseDownPosition )
             {
                 mouseClick = true;
@@ -69,10 +73,19 @@ public class PositionTurrets : MonoBehaviour
 
     void FixedUpdate()
     {
+        // Can't place turrets when we're moving
+        if (potatoController.IsRolling())
+        {
+            DisableLineRenderers();
+            return;
+        }
+        // Use a raycast to get the point on the floor that our mouse is pointing at
         Ray camRay = Camera.main.ScreenPointToRay(mousePosition);
         RaycastHit floorHit;
+        // Use an if here, because it's possible the raycast won't hit the floor
         if (Physics.Raycast(camRay, out floorHit, camRayLength, floorMask))
         {
+            // First check if the point is close to the player
             Vector3 playerPos = player.transform.position;
             float distance = Vector3.Distance(floorHit.point, playerPos);
             if (distance > maxDistance || distance < minDistance)
@@ -80,6 +93,8 @@ public class PositionTurrets : MonoBehaviour
                 DisableLineRenderers();
                 return;
             }
+
+            // Now find the four corners of the cell in which turrets can be placed
             float smallUp = 0.1f;
 
             float upX = Mathf.Ceil(floorHit.point.x);
@@ -88,12 +103,15 @@ public class PositionTurrets : MonoBehaviour
             float leftZ = Mathf.Floor(floorHit.point.z);
 
             float[][] corners = { new float[] { upX, leftZ }, new float[] { upX, rightZ }, new float[] { downX, rightZ }, new float[] { downX, leftZ } };
+
+            // Cast rays at each corner to get the heights of each corner
             RaycastHit[] hits = new RaycastHit[4];
 
             for (int i = 0; i < 4; i++)
             {
                 Ray corner = new Ray(new Vector3(corners[i][0], 10, corners[i][1]), Vector3.down);
                 RaycastHit cornerHit;
+                // If the ray doesn't hit the floor, or the corner is not flat with the mouse point
                 if (!Physics.Raycast(corner, out cornerHit, camRayLength, floorMask) || Mathf.Abs(cornerHit.point.y - floorHit.point.y) > 0.05f)
                 {
                     DisableLineRenderers();
@@ -102,6 +120,7 @@ public class PositionTurrets : MonoBehaviour
                 hits[i] = cornerHit;
             }
 
+            // Reconfigure the line renderers with the new corners
             for (int i = 0; i < 4; i++)
             {
                 lineRenderers[i].SetPosition(0, new Vector3(corners[i][0], hits[i].point.y + smallUp, corners[i][1]));
@@ -115,6 +134,7 @@ public class PositionTurrets : MonoBehaviour
             DisableLineRenderers();
         }
 
+        // Click at a valid position to interact with that cell
         if (validPosition && mouseClick)
         {
             mouseClick = false;

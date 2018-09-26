@@ -23,7 +23,7 @@ public class MovePotato : MonoBehaviour {
     private Quaternion lastRollQuat;
     private Vector3 lastRollForward;
     private bool standingUp = false;
-    private float resetTo = -1;
+    private Vector3 upOrDown = Vector3.zero;
     private readonly float standUpAcceptableError = 0.0001f;
 
     private float floorFallError = 0;
@@ -63,14 +63,14 @@ public class MovePotato : MonoBehaviour {
         // if we're moving forwards or backwards
         if ( v != 0)
         {
+            // Save the direction
+            lastV = v > 0 ? 1 : -1;
+
             // Roll the potato
-            potato.AddTorque(transform.right * v * speed * extraSpeed, ForceMode.Force);
+            potato.AddTorque(transform.right * lastV * speed * extraSpeed, ForceMode.Force);
 
             // Start rolling
             isRolling = true;
-
-            // Save the direction
-            lastV = v > 0 ? 1 : -1;
 
             // Save these so we can straighten up later
             lastRollTime = timeNow;
@@ -92,7 +92,7 @@ public class MovePotato : MonoBehaviour {
                 // Stop rolling, reset variables
                 isRolling = false;
                 standingUp = false;
-                resetTo = -1;
+                upOrDown = Vector3.zero;
                 // Remove any extra forces
                 potato.velocity = Vector3.zero;
                 potato.angularVelocity = Vector3.zero;
@@ -109,25 +109,25 @@ public class MovePotato : MonoBehaviour {
                 if ( timeDiff > stopSeconds ) // If we're gone past the desired stand up time, set the rotation explicity
                 {
                     // Watch out for the order of the rotations here.
-                    transform.rotation = Quaternion.identity * Quaternion.LookRotation(lastRollForward) * Quaternion.AngleAxis(resetTo, Vector3.right);
+                    //transform.rotation = Quaternion.identity * Quaternion.LookRotation(lastRollForward) * Quaternion.AngleAxis(resetTo, Vector3.right);
+                    transform.rotation = Quaternion.identity * Quaternion.LookRotation(lastRollForward, upOrDown);
 
                 } else // Lerp the rotation to make a smooth adjustment
                 {
                     // First time making adjustments
-                    if (resetTo == -1)
+                    if (upOrDown.y == 0)
                     {
-                        if (transform.up.y > 0) // If we're going to stand up, the correct way
+                        if (transform.up.y > 0) // If we're going to stand up the correct way
                         {
-                            resetTo = 0;
+                            upOrDown = Vector3.up;
                         } else // If we're going to be upside down
                         {
-                            resetTo = 180;
-                            // Have to inverse the forward, to make us look 'backwards'
-                            lastRollForward *= -1;
+                            upOrDown = Vector3.down;
                         }
                     }
                     // Make the adjustment
-                    transform.rotation = Quaternion.Slerp(lastRollQuat, Quaternion.identity * Quaternion.LookRotation(lastRollForward) * Quaternion.AngleAxis(resetTo, Vector3.right), timeDiff / stopSeconds);
+                    //transform.rotation = Quaternion.Slerp(lastRollQuat, Quaternion.identity * Quaternion.LookRotation(lastRollForward) * Quaternion.AngleAxis(resetTo, Vector3.right), timeDiff / stopSeconds);
+                    transform.rotation = Quaternion.Slerp(lastRollQuat, Quaternion.identity * Quaternion.LookRotation(lastRollForward, upOrDown), timeDiff / stopSeconds);
                 }
 
             } else // We are not close to standing up straight, keep on rolling.
@@ -157,6 +157,10 @@ public class MovePotato : MonoBehaviour {
         {
             jumping = true;
             potato.AddForce(Vector3.up * jumpForce);
+        } else
+        {
+            // Not jumping, add a bit of downwards pressure, so it's easier to climb slopes.
+            potato.AddForce(Vector3.down * 10);
         }
 
         // Should we show the idle animation? 
@@ -185,6 +189,16 @@ public class MovePotato : MonoBehaviour {
         {
             jumping = false;
         }
+    }
+
+    public bool IsRolling()
+    {
+        return isRolling;
+    }
+
+    public void LookAt()
+    {
+
     }
 
 }

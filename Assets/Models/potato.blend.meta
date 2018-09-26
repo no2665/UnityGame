@@ -24,6 +24,7 @@ ModelImporter:
     100032: Left_arm
     100034: //RootNode
     100036: Right_arm
+    100038: UCX_Body
     400000: Armature
     400002: Body
     400004: Bone
@@ -43,9 +44,14 @@ ModelImporter:
     400032: Left_arm
     400034: //RootNode
     400036: Right_arm
+    400038: UCX_Body
+    2300000: UCX_Body
+    3300000: UCX_Body
     4300000: Body
     4300002: Left_arm
     4300004: Right_arm
+    4300006: UCX_Body
+    6400000: UCX_Body
     7400000: Default Take
     7400002: End_Roll
     7400004: Side_Wobble

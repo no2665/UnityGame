@@ -64,7 +64,7 @@ Shader "Custom/FloorShader"
 				float neighbour1 = v.neighbours.x;
 				float neighbour2 = v.neighbours.y;
 				float y = v.vertex.y;
-				if ( y != neighbour1 || y != neighbour2 ) {
+				if ( y != neighbour1 || y != neighbour2) {
 					o.heightColor = _SlopeColor;
 					if (y <= -11.25 && neighbour1 <= -11.25 && neighbour2 <= -11.25) {
 						o.heightColor = _BeachColor;

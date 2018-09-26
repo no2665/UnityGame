@@ -62,8 +62,8 @@ public class GenerateTerrain : MonoBehaviour {
 
                 if (y == numVerticesZ - 1 && x == numVerticesX - 1)
                 {
-                    neighbour1 = vertices[y * numVerticesX + x - 1];
-                    neighbour2 = vertices[y * numVerticesX + x - numVerticesX - 1];
+                    neighbour1 = vertices[y * numVerticesX + x - numVerticesX - 1];
+                    neighbour2 = vertices[y * numVerticesX + x - 1];
                 }
                 else if (y == numVerticesZ - 1)
                 {
@@ -75,15 +75,31 @@ public class GenerateTerrain : MonoBehaviour {
                     neighbour1 = vertices[y * numVerticesX + x - 1];
                     neighbour2 = vertices[y * numVerticesX + x + numVerticesX];
                 }
-                else
+                else if (x == 0 && y > 0)
                 {
                     neighbour1 = vertices[y * numVerticesX + x + 1];
+                    neighbour2 = vertices[y * numVerticesX + x - numVerticesX];
+                }
+                else if (x == numVerticesX - 1 - 1 && y == 0)
+                {
+                    neighbour1 = vertices[y * numVerticesX + x + numVerticesX];
                     neighbour2 = vertices[y * numVerticesX + x + 1 + numVerticesX];
+                }
+                else if (x == 1 && y == 1)
+                {
+                    neighbour1 = vertices[y * numVerticesX + x - 1];
+                    neighbour2 = vertices[y * numVerticesX + x + numVerticesX];
+                }
+                else
+                {
+                    neighbour1 = vertices[y * numVerticesX + x + 1 + numVerticesX];
+                    neighbour2 = vertices[y * numVerticesX + x + 1];
                 }
 
                 neighbours[y * numVerticesX + x] = new Vector2(neighbour1.y, neighbour2.y);
             }
         }
+        Debug.Log(neighbours[0]);
         return neighbours;
     }
 }

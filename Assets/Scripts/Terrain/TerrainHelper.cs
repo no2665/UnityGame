@@ -166,10 +166,11 @@ public class TerrainHelper : MonoBehaviour {
         {
             // Furthest is always included in this case
             vertices[1] = new Vector3(fidgetFurthestX, furthestVertexHeight, fidgetFurthestZ);
+
             Vector2 middleLine = (new Vector2(fidgetFurthestX, fidgetFurthestZ)) - (new Vector2(fidgetClosestX, fidgetClosestZ));
             Vector2 closestToPoint = (new Vector2(x, z)) - (new Vector2(fidgetClosestX, fidgetClosestZ));
             Vector2 testXLine = (new Vector2(fidgetNextXX, fidgetNextXZ)) - (new Vector2(fidgetClosestX, fidgetClosestZ));
-            if ( Vector2.Angle(closestToPoint, testXLine) < Vector2.Angle(middleLine, testXLine) )
+            if ( Mathf.Abs(Vector2.Angle(closestToPoint, testXLine)) < Mathf.Abs(Vector2.Angle(middleLine, testXLine)) )
             {
                 vertices[2] = new Vector3(fidgetNextXX, nextXVertexHeight, fidgetNextXZ);
             } else

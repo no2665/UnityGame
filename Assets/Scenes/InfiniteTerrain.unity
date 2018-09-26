@@ -147,12 +147,22 @@ Prefab:
       propertyPath: m_RootOrder
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114604967712294930, guid: 922a629553ea4bc4588078c3531e1d8a,
+        type: 2}
+      propertyPath: energySlider
+      value: 
+      objectReference: {fileID: 2078245759}
+    - target: {fileID: 114837732585619352, guid: 922a629553ea4bc4588078c3531e1d8a,
+        type: 2}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1300310259}
     - target: {fileID: 114709071438344966, guid: 922a629553ea4bc4588078c3531e1d8a,
         type: 2}
       propertyPath: player
       value: 
       objectReference: {fileID: 1300310259}
-    - target: {fileID: 114837732585619352, guid: 922a629553ea4bc4588078c3531e1d8a,
+    - target: {fileID: 114604967712294930, guid: 922a629553ea4bc4588078c3531e1d8a,
         type: 2}
       propertyPath: player
       value: 

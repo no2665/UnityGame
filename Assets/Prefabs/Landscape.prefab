@@ -22,8 +22,8 @@ GameObject:
   - component: {fileID: 114994031933903240}
   - component: {fileID: 114359074127386980}
   - component: {fileID: 114837732585619352}
+  - component: {fileID: 114604967712294930}
   - component: {fileID: 114709071438344966}
-  - component: {fileID: 114730271323846046}
   m_Layer: 0
   m_Name: Landscape
   m_TagString: Untagged
@@ -127,6 +127,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   terrain: {fileID: 1424249239956144, guid: 3f0475b895df73340bb36ebc577e35e5, type: 2}
+--- !u!114 &114604967712294930
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1501533229585720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fee99018495fd0a4dbb15a03b6c6e7f4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprout: {fileID: 1213780253650006, guid: ab15a4f7cb350b54a80df0f823ac8524, type: 2}
+  energySlider: {fileID: 0}
 --- !u!114 &114709071438344966
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -142,19 +155,7 @@ MonoBehaviour:
     type: 2}
   player: {fileID: 0}
   maxDistance: 15
-  minDistance: 1
---- !u!114 &114730271323846046
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1501533229585720}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fee99018495fd0a4dbb15a03b6c6e7f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sprout: {fileID: 1213780253650006, guid: ab15a4f7cb350b54a80df0f823ac8524, type: 2}
+  minDistance: 2
 --- !u!114 &114837732585619352
 MonoBehaviour:
   m_ObjectHideFlags: 1
