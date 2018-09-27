@@ -34,15 +34,15 @@ Shader "Custom/FloorShader"
 			struct vertexdata_base {
 				float4 vertex : POSITION;
 				float3 normal : NORMAL;
-				float2 neighbours : TEXCOORD3; 
+				float2 neighbourData : TEXCOORD3; 
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 			};
 
             struct v2f
             {
                 SHADOW_COORDS(1) // put shadows data into TEXCOORD1
-                nointerpolation fixed3 diff : COLOR0;
-                nointerpolation fixed3 ambient : COLOR1;
+				nointerpolation fixed3 diff : COLOR0;
+				nointerpolation fixed3 ambient : COLOR1;
 				nointerpolation fixed4 heightColor : COLOR2;
 				nointerpolation fixed3 normal : NORMAL;
                 float4 pos : SV_POSITION;
@@ -61,12 +61,11 @@ Shader "Custom/FloorShader"
                 o.diff = nl * _LightColor0.rgb;
                 o.ambient = ShadeSH9(half4(worldNormal,1));
 				o.normal = v.normal;
-				float neighbour1 = v.neighbours.x;
-				float neighbour2 = v.neighbours.y;
+				float neighbourDataSlope = v.neighbourData.x;
 				float y = v.vertex.y;
-				if ( y != neighbour1 || y != neighbour2) {
+				if (neighbourDataSlope == 10 ) {
 					o.heightColor = _SlopeColor;
-					if (y <= -11.25 && neighbour1 <= -11.25 && neighbour2 <= -11.25) {
+					if (y <= -11.25) {
 						o.heightColor = _BeachColor;
 					}
 				} else {

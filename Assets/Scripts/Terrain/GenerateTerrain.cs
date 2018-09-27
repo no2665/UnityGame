@@ -45,61 +45,67 @@ public class GenerateTerrain : MonoBehaviour {
             }
         }
         mesh.vertices = vertices;
-        mesh.uv4 = GenerateVertexNeighbours(mesh);
+        mesh.uv4 = GenerateVertexNeighbourData(mesh);
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
     }
 
-    private Vector2[] GenerateVertexNeighbours(Mesh mesh)
+    private Vector2[] GenerateVertexNeighbourData(Mesh mesh)
     {
         Vector3[] vertices = mesh.vertices;
         Vector2[] neighbours = new Vector2[vertices.Length];
-        for (int y = 0; y < numVerticesZ; y++)
+
+        for (int z = 0; z < numVerticesZ; z++)
         {
             for (int x = 0; x < numVerticesX; x++)
             {
-                Vector3 neighbour1, neighbour2;
-
-                if (y == numVerticesZ - 1 && x == numVerticesX - 1)
+                List<float> heights = new List<float>();
+                int p = z * numVerticesX + x;
+                Vector3 v = vertices[p];
+                float y = v.y;
+                int nextZ = (z + 1) * numVerticesX;
+                if ( p + 1 < nextZ )
                 {
-                    neighbour1 = vertices[y * numVerticesX + x - numVerticesX - 1];
-                    neighbour2 = vertices[y * numVerticesX + x - 1];
+                    heights.Add(vertices[p + 1].y);
                 }
-                else if (y == numVerticesZ - 1)
+                int thisZ = z * numVerticesX;
+                if ( p - 1 >= thisZ)
                 {
-                    neighbour1 = vertices[y * numVerticesX + x + 1];
-                    neighbour2 = vertices[y * numVerticesX + x - numVerticesX];
+                    heights.Add(vertices[p - 1].y);
                 }
-                else if (x == numVerticesX - 1)
+                if ( p + numVerticesX < numVerticesX * numVerticesZ )
                 {
-                    neighbour1 = vertices[y * numVerticesX + x - 1];
-                    neighbour2 = vertices[y * numVerticesX + x + numVerticesX];
+                    heights.Add(vertices[p + numVerticesX].y);
                 }
-                else if (x == 0 && y > 0)
+                if ( p - numVerticesX >= 0 )
                 {
-                    neighbour1 = vertices[y * numVerticesX + x + 1];
-                    neighbour2 = vertices[y * numVerticesX + x - numVerticesX];
+                    heights.Add(vertices[p - numVerticesX].y);
                 }
-                else if (x == numVerticesX - 1 - 1 && y == 0)
+                int nextZLastX = ((z + 1) * numVerticesX) + numVerticesX - 1;
+                if ( p + 1 + numVerticesX <= nextZLastX && nextZLastX < numVerticesX * numVerticesZ )
                 {
-                    neighbour1 = vertices[y * numVerticesX + x + numVerticesX];
-                    neighbour2 = vertices[y * numVerticesX + x + 1 + numVerticesX];
+                    heights.Add(vertices[p + 1 + numVerticesX].y);
                 }
-                else if (x == 1 && y == 1)
+                int prevZ = (z - 1) * numVerticesX;
+                if ( p - 1 - numVerticesX >= prevZ && prevZ >= 0 )
                 {
-                    neighbour1 = vertices[y * numVerticesX + x - 1];
-                    neighbour2 = vertices[y * numVerticesX + x + numVerticesX];
-                }
-                else
-                {
-                    neighbour1 = vertices[y * numVerticesX + x + 1 + numVerticesX];
-                    neighbour2 = vertices[y * numVerticesX + x + 1];
+                    heights.Add(vertices[p - 1 - numVerticesX].y);
                 }
 
-                neighbours[y * numVerticesX + x] = new Vector2(neighbour1.y, neighbour2.y);
+                Vector2 slopeFound = Vector2.zero;
+                foreach (float h in heights)
+                {
+                    if ( h != y )
+                    {
+                        slopeFound.x = 10;
+                        break;
+                    }
+                }
+
+                neighbours[z * numVerticesX + x] = slopeFound;
             }
         }
-        Debug.Log(neighbours[0]);
+
         return neighbours;
     }
 }
