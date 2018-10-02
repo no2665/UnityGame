@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+ * Updates terrain mesh with the perlin noise values, to achieve an interesting (not flat) terrain
+ */
 [ExecuteInEditMode]
 public class GenerateTerrain : MonoBehaviour {
 
@@ -16,6 +19,10 @@ public class GenerateTerrain : MonoBehaviour {
         gameObject.GetComponent<MeshCollider>().sharedMesh = mesh;
     }
 
+    /*
+     * To be used when moving a terrain tile. It calls an internal regenerate function which updates the 
+     * mesh with new height values
+     */
     public void RegenerateMesh()
     {
         Mesh mesh = gameObject.GetComponent<MeshFilter>().mesh;
@@ -25,10 +32,17 @@ public class GenerateTerrain : MonoBehaviour {
         }
     }
 
+    /*
+     * Move each vertex to the height from the perlin noise generator.
+     * Move each vertex along the x and z axis by some small amount to make the mesh 
+     * non-square
+     */
     private void RegenerateMesh(Mesh mesh)
     {
         Vector3[] vertices = mesh.vertices;
+        // Mesh isn't valid and/or ready yet
         if (vertices.Length == 0) return;
+
         for (int y = 0; y < numVerticesZ; y++)
         {
             for (int x = 0; x < numVerticesX; x++)
@@ -50,10 +64,25 @@ public class GenerateTerrain : MonoBehaviour {
         mesh.RecalculateNormals();
     }
 
+    /*
+     * Pack some extra data into the uv4 matrix for the shader to use
+     * Here we look at each vertex's neighbours to see the vertex is part of a slope,
+     * so the shader can then use a different colour
+     */
     private Vector2[] GenerateVertexNeighbourData(Mesh mesh)
     {
         Vector3[] vertices = mesh.vertices;
         Vector2[] neighbours = new Vector2[vertices.Length];
+
+        /*
+         * x-x-x
+         * |/|/|
+         * x-x-x
+         * |/|/|
+         * x-x-x
+         * Have to look at each vertex (x) and determine which vertices it shares any triangle with.
+         * Below (a) will be the current vertex, and (b) will be the potential neighbour.
+         */
 
         for (int z = 0; z < numVerticesZ; z++)
         {
@@ -63,35 +92,78 @@ public class GenerateTerrain : MonoBehaviour {
                 int p = z * numVerticesX + x;
                 Vector3 v = vertices[p];
                 float y = v.y;
+                /*
+                 * x-x-x
+                 * |/|/|
+                 * x-a-b
+                 * |/|/|
+                 * x-x-x
+                 */
                 int nextZ = (z + 1) * numVerticesX;
                 if ( p + 1 < nextZ )
                 {
                     heights.Add(vertices[p + 1].y);
                 }
+                /*
+                 * x-x-x
+                 * |/|/|
+                 * b-a-x
+                 * |/|/|
+                 * x-x-x
+                 */
                 int thisZ = z * numVerticesX;
                 if ( p - 1 >= thisZ)
                 {
                     heights.Add(vertices[p - 1].y);
                 }
+                /*
+                 * x-b-x
+                 * |/|/|
+                 * x-a-x
+                 * |/|/|
+                 * x-x-x
+                 */
                 if ( p + numVerticesX < numVerticesX * numVerticesZ )
                 {
                     heights.Add(vertices[p + numVerticesX].y);
                 }
+                /*
+                 * x-x-x
+                 * |/|/|
+                 * x-a-x
+                 * |/|/|
+                 * x-b-x
+                 */
                 if ( p - numVerticesX >= 0 )
                 {
                     heights.Add(vertices[p - numVerticesX].y);
                 }
+                /*
+                 * x-x-b
+                 * |/|/|
+                 * x-a-x
+                 * |/|/|
+                 * x-x-x
+                 */
                 int nextZLastX = ((z + 1) * numVerticesX) + numVerticesX - 1;
                 if ( p + 1 + numVerticesX <= nextZLastX && nextZLastX < numVerticesX * numVerticesZ )
                 {
                     heights.Add(vertices[p + 1 + numVerticesX].y);
                 }
+                /*
+                 * x-x-x
+                 * |/|/|
+                 * x-a-x
+                 * |/|/|
+                 * b-x-x
+                 */
                 int prevZ = (z - 1) * numVerticesX;
                 if ( p - 1 - numVerticesX >= prevZ && prevZ >= 0 )
                 {
                     heights.Add(vertices[p - 1 - numVerticesX].y);
                 }
 
+                // Now we know the neighbours heights, check it against ours
                 Vector2 slopeFound = Vector2.zero;
                 foreach (float h in heights)
                 {

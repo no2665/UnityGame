@@ -24,6 +24,9 @@ public class CreateTerrainMesh : MonoBehaviour {
         gameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
     }
 
+    /*
+     * Generate face triangles
+     */
     private int[] GenerateTriangles()
     {
         //generate two triangles per vertex except the last column and last row
@@ -43,6 +46,9 @@ public class CreateTerrainMesh : MonoBehaviour {
         return triangles;
     }
 
+    /*
+     * Generate vertex coordinates
+     */
     Vector3[] GenerateVertices()
     {
         Vector3[] vertices = new Vector3[numVerticesX * numVerticesZ];
@@ -50,12 +56,16 @@ public class CreateTerrainMesh : MonoBehaviour {
         {
             for (int x = 0; x < numVerticesX; x++)
             {
+                // Set y = 0, this is be changed later
                 vertices[y * numVerticesX + x] = new Vector3(x * edgeLength, 0, y * edgeLength);
             }
         }
         return vertices;
     }
 
+    /*
+     * Generate texture coordinates
+     */
     private Vector2[] GenerateUV()
     {
         Vector2[] uvs = new Vector2[numVerticesX * numVerticesZ];
@@ -65,6 +75,7 @@ public class CreateTerrainMesh : MonoBehaviour {
         {
             for (int x = 0; x < numVerticesX; x++)
             {
+                // x, y have to be between 0 and 1
                 uvs[y * numVerticesX + x] = new Vector2((float)(x) / widthF, (float)(y) / heightF);
             }
         }

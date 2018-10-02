@@ -9,6 +9,7 @@ public class TerrainHelper : MonoBehaviour {
     public const int numVerticesX = 3;
     public const int numVerticesZ = 3;
     public const int edgeLength = 5;
+    public const int overallLength = edgeLength * (numVerticesX - 1);
 
     public float heightScale = 5.0f;
     public float detailScale = 5.0f;

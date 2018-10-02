@@ -6,14 +6,14 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
     
     public GameObject player;
     public GameObject water;
+    public int halfTerrainWidth = 10;
+    public int halfTerrainDepth = 10;
 
-    int terrainSize = 10;
-    int halfTilesX = 10;
-    int halfTilesZ = 10;
+    private const int tileSize = TerrainHelper.overallLength;
 
-    Vector3 startPos;
+    private Vector3 startPos;
 
-    Hashtable tiles = new Hashtable();
+    private Hashtable tiles = new Hashtable();
 
     private TerrainPool pool;
 
@@ -23,13 +23,13 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
         pool = gameObject.GetComponent<TerrainPool>();
         startPos = Vector3.zero;
 
+        // Create the initial terrain
         float updateTime = Time.realtimeSinceStartup;
-
-        for (int x = -halfTilesX; x < halfTilesX; x++)
+        for (int x = -halfTerrainWidth; x < halfTerrainWidth; x++)
         {
-            for (int z = -halfTilesZ; z < halfTilesZ; z++)
+            for (int z = -halfTerrainDepth; z < halfTerrainDepth; z++)
             {
-                Vector3 pos = new Vector3(x * terrainSize + startPos.x, 0, z * terrainSize + startPos.z);
+                Vector3 pos = new Vector3(x * tileSize + startPos.x, 0, z * tileSize + startPos.z);
                 TerrainSquare tile = pool.RequestTerrain();
                 tile.MoveTo(pos);
                 tiles.Add(tile.Name, tile);
@@ -44,34 +44,40 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
         int xMove = (int)(player.transform.position.x - startPos.x);
         int zMove = (int)(player.transform.position.z - startPos.z);
 
-        if ( Mathf.Abs(xMove) >= terrainSize || Mathf.Abs(zMove) >= terrainSize )
+        // if we've moved the lenght of a tile
+        if ( Mathf.Abs(xMove) >= tileSize || Mathf.Abs(zMove) >= tileSize )
         {
             float updateTime = Time.realtimeSinceStartup;
 
-            int playerX = (int)(Mathf.Floor(player.transform.position.x / terrainSize) * terrainSize);
-            int playerZ = (int)(Mathf.Floor(player.transform.position.z / terrainSize) * terrainSize);
+            int playerX = (int)(Mathf.Floor(player.transform.position.x / tileSize) * tileSize);
+            int playerZ = (int)(Mathf.Floor(player.transform.position.z / tileSize) * tileSize);
 
+            // Move the water so it's always under the player
             water.transform.position = new Vector3(playerX, -TerrainHelper.Instance.heightScale + TerrainHelper.Instance.waterLevel, playerZ);
 
-            for ( int x = -halfTilesX; x < halfTilesX; x++ )
+            // Look to move more terrain into place
+            for ( int x = -halfTerrainWidth; x < halfTerrainWidth; x++ )
             {
-                for ( int z = -halfTilesZ; z < halfTilesZ; z++)
+                for ( int z = -halfTerrainDepth; z < halfTerrainDepth; z++)
                 {
-                    Vector3 pos = new Vector3(x * terrainSize + playerX, 0, z * terrainSize + playerZ);
+                    Vector3 pos = new Vector3(x * tileSize + playerX, 0, z * tileSize + playerZ);
                     string tilename = TerrainSquare.GenerateName(pos.x, pos.z);
 
+                    // if we don't have this terrain in place yet
                     if ( ! tiles.ContainsKey( tilename ) )
                     {
                         TerrainSquare tile = pool.RequestTerrain();
                         tile.MoveTo(pos);
                         tiles.Add(tile.Name, tile);
-                    } else
+                    } else // terrain exists
                     {
+                        // Update it's time still, so it won't be marked for deletion
                         (tiles[tilename] as TerrainSquare).creationTime = updateTime;
                     }
                 }
             }
 
+            // Delete all terrain that hasn't been updated.
             Hashtable newTerrain = new Hashtable();
             foreach ( TerrainSquare t in tiles.Values )
             {
