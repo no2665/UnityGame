@@ -253,7 +253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4124f24c080d18b4581829be07f6eebe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerBase: {fileID: 1034082944354056, guid: 5de4814681df6a641a01c80461c5782b, type: 2}
+  playerBase: {fileID: 1413067751798160, guid: 5de4814681df6a641a01c80461c5782b, type: 2}
 --- !u!114 &114609727988798794
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -348,7 +348,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1
-  m_BaseOffset: 0.5
+  m_BaseOffset: 0.47
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!222 &222318417650104224

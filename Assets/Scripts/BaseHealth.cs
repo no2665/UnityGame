@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class BaseHealth : MonoBehaviour {
 
     public Slider healthSlider;
+    public float baseRadius = 4;
 
     public float maxHealth = 100;
     public float currentHealth = 100;

@@ -66,7 +66,7 @@ public class TerrainPool : MonoBehaviour {
     private void CreateNewTerrain()
     {
         float updateTime = Time.realtimeSinceStartup;
-        GameObject t = (GameObject)Instantiate(terrain, inactiveTerrainContainer.transform.position, Quaternion.identity, inactiveTerrainContainer.transform);
+        GameObject t = Instantiate<GameObject>(terrain, inactiveTerrainContainer.transform.position, Quaternion.identity, inactiveTerrainContainer.transform);
         inactiveTerrainPool.Add(new TerrainSquare(t, updateTime));
     }
 

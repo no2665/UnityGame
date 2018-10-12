@@ -11,7 +11,7 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
     public int halfTerrainWidth = 10;
     public int halfTerrainDepth = 10;
 
-    private const int tileSize = TerrainHelper.overallLength;
+    public const int tileSize = TerrainHelper.overallLength;
 
     private Vector3 startPos;
 
