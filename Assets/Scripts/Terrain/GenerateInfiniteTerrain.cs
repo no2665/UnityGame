@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
+using System.Threading;
 
 public class GenerateInfiniteTerrain : MonoBehaviour {
     
@@ -17,10 +19,14 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
 
     private TerrainPool pool;
 
-    // Use this for initialization
+    private NavMeshSurface navSurface;
+    private bool shouldRebuildSurface = false;
+    private bool firstBuild = true;
+    
     void Start ()
     {
-        pool = gameObject.GetComponent<TerrainPool>();
+        pool = GetComponent<TerrainPool>();
+        navSurface = GetComponent<NavMeshSurface>();
         startPos = Vector3.zero;
 
         // Create the initial terrain
@@ -35,11 +41,26 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
                 tiles.Add(tile.Name, tile);
             }
         }
-		
-	}
+        shouldRebuildSurface = true;
+    }
 
-	// Update is called once per frame
-	void Update ()
+    private void Update()
+    {
+        if ( shouldRebuildSurface )
+        {
+            shouldRebuildSurface = false;
+            if ( firstBuild )
+            {
+                firstBuild = false;
+                navSurface.BuildNavMesh();
+            } else
+            {
+                navSurface.UpdateNavMesh(navSurface.navMeshData);
+            }
+        }
+    }
+
+    void FixedUpdate ()
     {
         int xMove = (int)(player.transform.position.x - startPos.x);
         int zMove = (int)(player.transform.position.z - startPos.z);
@@ -83,6 +104,7 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
             {
                 if (t.creationTime < updateTime )
                 {
+                    shouldRebuildSurface = true;
                     pool.ReturnTerrain(t);
                 } else
                 {

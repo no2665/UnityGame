@@ -65,11 +65,11 @@ Shader "Custom/FloorShader"
 				float y = v.vertex.y;
 				if (neighbourDataSlope == 10 ) {
 					o.heightColor = _SlopeColor;
-					if (y <= -11.25) {
+					if (y <= -7.5) {
 						o.heightColor = _BeachColor;
 					}
 				} else {
-					o.heightColor = y < -13 ? _UnderWaterColor : _Color;
+					o.heightColor = y < -8 ? _UnderWaterColor : _Color;
 				}
 
                 // compute shadows data

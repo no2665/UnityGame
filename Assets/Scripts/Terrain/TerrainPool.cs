@@ -21,6 +21,7 @@ public class TerrainPool : MonoBehaviour {
         inactiveTerrainPool = new List<TerrainSquare>();
         // Set up the containers for the terrain gameobjects
         GameObject terrainContainer = new GameObject("TerrainContainer");
+        terrainContainer.transform.parent = transform;
         activeTerrainContainer = new GameObject("Active");
         activeTerrainContainer.transform.parent = terrainContainer.transform;
         inactiveTerrainContainer = new GameObject("Inactive");

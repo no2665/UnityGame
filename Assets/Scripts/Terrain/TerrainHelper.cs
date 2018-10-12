@@ -20,6 +20,7 @@ public class TerrainHelper : MonoBehaviour {
     public float fidgetRange = 1.0f;
 
     public float waterLevel = 3;
+    public float baseRadius = 30;
 
     private static TerrainHelper instance = null;
 
@@ -68,12 +69,18 @@ public class TerrainHelper : MonoBehaviour {
     // Gets the value of y at x, z coordinates. Y is returned in discrete steps. Used for getting the y value of the vertices in the terrain mesh
     public float GetYAt(float x, float z)
     {
+        float distance = Vector2.Distance(Vector2.zero, (new Vector2(x, z)));
+        if (distance <= baseRadius)
+        {
+            return -heightScale / ((steps - 1) / 2);
+        }
+
         // Get a value from the perlin generator, and map it to 0 to 1
         float perlin1 = (float)heightPerlin.GetValue((x + perlinOffsetY1) / detailScale, 0, (z + perlinOffsetY1) / detailScale);
         perlin1 = MathMap(perlin1, -1, 1, 0, 1);
         // Rewrite it to be from -heightScale to 0
         float y = (perlin1 * heightScale) - heightScale;
-        // Used to finding which discrete value y should be set to
+        // Used for finding which discrete value y should be set to
         float smallestDiff = float.MaxValue;
         float steppedY = y;
         // Go through each discrete value, to find which is closest to y, and set y to that value

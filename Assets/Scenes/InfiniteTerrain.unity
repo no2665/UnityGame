@@ -149,6 +149,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 114604967712294930, guid: 922a629553ea4bc4588078c3531e1d8a,
         type: 2}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1300310259}
+    - target: {fileID: 114604967712294930, guid: 922a629553ea4bc4588078c3531e1d8a,
+        type: 2}
       propertyPath: energySlider
       value: 
       objectReference: {fileID: 2078245759}
@@ -162,11 +167,16 @@ Prefab:
       propertyPath: player
       value: 
       objectReference: {fileID: 1300310259}
-    - target: {fileID: 114604967712294930, guid: 922a629553ea4bc4588078c3531e1d8a,
+    - target: {fileID: 224907479160592102, guid: 922a629553ea4bc4588078c3531e1d8a,
         type: 2}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 1300310259}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 224907479160592102, guid: 922a629553ea4bc4588078c3531e1d8a,
+        type: 2}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 922a629553ea4bc4588078c3531e1d8a, type: 2}
   m_IsPrefabParent: 0
@@ -838,6 +848,10 @@ Prefab:
     - target: {fileID: 4171434100166200, guid: a6c3a2e9db9bb68418eca78ae8b21e17, type: 2}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860814296828806, guid: a6c3a2e9db9bb68418eca78ae8b21e17, type: 2}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a6c3a2e9db9bb68418eca78ae8b21e17, type: 2}

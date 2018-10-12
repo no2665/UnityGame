@@ -28,14 +28,14 @@ public class TurretManager : MonoBehaviour
     private float energy;
     private float lastEnergyAdded;
     
-    private MovePotato potatoController;
+    //private MovePotato potatoController;
 
     public void Start()
     {
         energy = energySlider.value;
         lastEnergyAdded = Time.realtimeSinceStartup;
 
-        potatoController = player.GetComponent<MovePotato>();
+        //potatoController = player.GetComponent<MovePotato>();
     }
 
     public void FixedUpdate()
