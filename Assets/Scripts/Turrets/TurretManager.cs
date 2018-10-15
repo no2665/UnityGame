@@ -27,6 +27,11 @@ public class TurretManager : MonoBehaviour
     private Hashtable turrets = new Hashtable();
     private float energy;
     private float lastEnergyAdded;
+
+    private GameObject turretContainer;
+
+    private float sproutOffsetX = 0.5f;
+    private float sproutOffsetZ = 0.5f;
     
     //private MovePotato potatoController;
 
@@ -34,6 +39,9 @@ public class TurretManager : MonoBehaviour
     {
         energy = energySlider.value;
         lastEnergyAdded = Time.realtimeSinceStartup;
+
+        turretContainer = new GameObject("Turrets");
+        turretContainer.transform.parent = transform;
 
         //potatoController = player.GetComponent<MovePotato>();
     }
@@ -51,6 +59,11 @@ public class TurretManager : MonoBehaviour
             energy = energySlider.maxValue;
         }
         energySlider.value = energy;
+    }
+
+    public void HandleClick(Vector3 pos)
+    {
+        HandleClick(pos.x, pos.y, pos.z);
     }
 
     public void HandleClick(float x, float y, float z)
@@ -73,7 +86,7 @@ public class TurretManager : MonoBehaviour
             turrets[x] = new Hashtable();
         }
         ((Hashtable)turrets[x])[z] = TurretType.GROW;
-        Instantiate(sprout, new Vector3(x, y, z), Quaternion.identity);
+        Instantiate(sprout, new Vector3( x + sproutOffsetX, y, z + sproutOffsetZ ), Quaternion.identity, turretContainer.transform);
     }
 
     public TurretType GetTurret(float x, float z)

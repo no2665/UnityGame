@@ -14,17 +14,21 @@ public class EnemyController : MonoBehaviour {
     private float lastAttack = 0;
 
     private GameObject playerBase;
-    private BaseHealth baseHealth;
+    private Health baseHealth;
     private Vector3 baseLocation;
 
+    private RectTransform healthBarTransform;
+    private GameObject mainCamera;
 
 	void Start () {
+        healthBarTransform = GetComponentInChildren<RectTransform>();
+        mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         playerBase = GameObject.FindGameObjectWithTag("Base");
 
-        baseHealth = playerBase.GetComponent<BaseHealth>();
+        baseHealth = playerBase.GetComponent<Health>();
         baseLocation = playerBase.transform.position;
 
-        float baseRadius = baseHealth.baseRadius;
+        float baseRadius = playerBase.GetComponent<RootManager>().baseRadius;
         Vector3 noYEnemyPosition = new Vector3(transform.position.x, 0, transform.position.z);
         Vector3 noYBasePosition = new Vector3(baseLocation.x, 0, baseLocation.z);
         Vector3 baseToEnemy = noYEnemyPosition - noYBasePosition;
@@ -46,6 +50,12 @@ public class EnemyController : MonoBehaviour {
                 baseHealth.TakeHealth(damage);
             }
         }
+
+        Vector3 v = mainCamera.transform.position - healthBarTransform.transform.position;
+        v.y = 0.0f;
+        healthBarTransform.transform.LookAt(mainCamera.transform.position - v);
+        healthBarTransform.transform.Rotate(0, 180, 0);
+
     }
 
 }

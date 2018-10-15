@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
-public class PositionTurrets : MonoBehaviour
+public class LandscapeCursor : MonoBehaviour
 {
-
     public GameObject lineRendererPrefab;
     public GameObject player;
     public float maxDistance = 15;
     public float minDistance = 1;
 
     private MovePotato potatoController;
-    private TurretManager turretManager;
+    private LandscapeManager landscapeManager;
     private Vector3 mousePosition = Vector3.zero;
     private Vector3 mouseDownPosition = Vector3.zero;
     private bool halfClick = false;
     private bool mouseClick = false;
     private int floorMask;
     private readonly float camRayLength = 100f;
+    private GameObject cursor;
     private LineRenderer[] lineRenderers;
 
     private bool validPosition = false;
@@ -26,16 +26,18 @@ public class PositionTurrets : MonoBehaviour
     private void Awake()
     {
         floorMask = LayerMask.GetMask("Floor");
+        cursor = new GameObject("Cursor");
+        cursor.transform.parent = transform;
         lineRenderers = new LineRenderer[4];
         for (int i = 0; i < 4; i++)
         {
-            GameObject lineGameObject = (GameObject)Instantiate(lineRendererPrefab, gameObject.transform);
+            GameObject lineGameObject = (GameObject)Instantiate(lineRendererPrefab, cursor.transform);
             LineRenderer lineRenderer = lineGameObject.GetComponent<LineRenderer>();
             lineRenderer.positionCount = 2;
             lineRenderer.enabled = false;
             lineRenderers[i] = lineRenderer;
         }
-        turretManager = GetComponent<TurretManager>();
+        landscapeManager = GetComponent<LandscapeManager>();
     }
 
     // Use this for initialization
@@ -151,7 +153,7 @@ public class PositionTurrets : MonoBehaviour
             mouseClick = false;
             if ( validPosition )
             {
-                turretManager.HandleClick(Mathf.Floor(mouseLocation.x) + 0.5f, mouseLocation.y, Mathf.Floor(mouseLocation.z) + 0.5f);
+                landscapeManager.HandleClick(mouseLocation);
             }
         }
     }

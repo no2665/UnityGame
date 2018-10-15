@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BaseHealth : MonoBehaviour {
+public class Health : MonoBehaviour {
 
     public Slider healthSlider;
-    public float baseRadius = 4;
 
     public float maxHealth = 100;
     public float currentHealth = 100;
+
+    void Start()
+    {
+        UpdateUI(); 
+    }
 
     public void TakeHealth(float amount)
     {
