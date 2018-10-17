@@ -30,17 +30,17 @@ public class CreateTerrainMesh : MonoBehaviour {
     private int[] GenerateTriangles()
     {
         //generate two triangles per vertex except the last column and last row
-        int[] triangles = new int[(numVerticesX - 1) * (numVerticesZ - 1) * 6];
-        for (int y = 0; y < numVerticesZ - 1; y++)
+        int[] triangles = new int[ ( numVerticesX - 1 ) * ( numVerticesZ - 1 ) * 6 ];
+        for ( int y = 0; y < numVerticesZ - 1; y++ )
         {
-            for (int x = 0; x < numVerticesX - 1; x++)
+            for ( int x = 0; x < numVerticesX - 1; x++ )
             {
-                triangles[(y * (numVerticesX - 1) + x) * 6 + 5] = y * numVerticesX + x;
-                triangles[(y * (numVerticesX - 1) + x) * 6 + 4] = y * numVerticesX + x + 1;
-                triangles[(y * (numVerticesX - 1) + x) * 6 + 3] = y * numVerticesX + x + 1 + numVerticesX;
-                triangles[(y * (numVerticesX - 1) + x) * 6 + 2] = y * numVerticesX + x;
-                triangles[(y * (numVerticesX - 1) + x) * 6 + 1] = y * numVerticesX + x + 1 + numVerticesX;
-                triangles[(y * (numVerticesX - 1) + x) * 6 + 0] = y * numVerticesX + x + numVerticesX;
+                triangles[ ( y * ( numVerticesX - 1 ) + x ) * 6 + 5 ] = y * numVerticesX + x;
+                triangles[ ( y * ( numVerticesX - 1 ) + x ) * 6 + 4 ] = y * numVerticesX + x + 1;
+                triangles[ ( y * ( numVerticesX - 1 ) + x ) * 6 + 3 ] = y * numVerticesX + x + 1 + numVerticesX;
+                triangles[ ( y * ( numVerticesX - 1 ) + x ) * 6 + 2 ] = y * numVerticesX + x;
+                triangles[ ( y * ( numVerticesX - 1 ) + x ) * 6 + 1 ] = y * numVerticesX + x + 1 + numVerticesX;
+                triangles[ ( y * ( numVerticesX - 1 ) + x ) * 6 + 0 ] = y * numVerticesX + x + numVerticesX;
             }
         }
         return triangles;
@@ -51,13 +51,13 @@ public class CreateTerrainMesh : MonoBehaviour {
      */
     Vector3[] GenerateVertices()
     {
-        Vector3[] vertices = new Vector3[numVerticesX * numVerticesZ];
-        for (int y = 0; y < numVerticesZ; y++)
+        Vector3[] vertices = new Vector3[ numVerticesX * numVerticesZ ];
+        for ( int y = 0; y < numVerticesZ; y++ )
         {
-            for (int x = 0; x < numVerticesX; x++)
+            for ( int x = 0; x < numVerticesX; x++ )
             {
                 // Set y = 0, this is be changed later
-                vertices[y * numVerticesX + x] = new Vector3(x * edgeLength, 0, y * edgeLength);
+                vertices[ y * numVerticesX + x ] = new Vector3( x * edgeLength, 0, y * edgeLength );
             }
         }
         return vertices;
@@ -68,15 +68,15 @@ public class CreateTerrainMesh : MonoBehaviour {
      */
     private Vector2[] GenerateUV()
     {
-        Vector2[] uvs = new Vector2[numVerticesX * numVerticesZ];
-        float widthF = (float)numVerticesX - 1;
-        float heightF = (float)numVerticesZ - 1;
-        for (int y = 0; y < numVerticesZ; y++)
+        Vector2[] uvs = new Vector2[ numVerticesX * numVerticesZ ];
+        float widthF = (float) numVerticesX - 1;
+        float heightF = (float) numVerticesZ - 1;
+        for ( int y = 0; y < numVerticesZ; y++ )
         {
-            for (int x = 0; x < numVerticesX; x++)
+            for ( int x = 0; x < numVerticesX; x++ )
             {
                 // x, y have to be between 0 and 1
-                uvs[y * numVerticesX + x] = new Vector2((float)(x) / widthF, (float)(y) / heightF);
+                uvs[ y * numVerticesX + x ] = new Vector2( x / widthF, y / heightF );
             }
         }
         return uvs;

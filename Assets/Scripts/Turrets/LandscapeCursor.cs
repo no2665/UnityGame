@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityStandardAssets.CrossPlatformInput;
 
+/*
+ * Controls the four lines that make up a square that appear around the mouse, when the mouse is pointing
+ * at the landscape.
+ * Used to highlight interactable squares.
+ */
 public class LandscapeCursor : MonoBehaviour
 {
     public GameObject lineRendererPrefab;
@@ -23,30 +28,30 @@ public class LandscapeCursor : MonoBehaviour
 
     private bool validPosition = false;
 
+    // Called first
     private void Awake()
     {
         floorMask = LayerMask.GetMask("Floor");
         cursor = new GameObject("Cursor");
         cursor.transform.parent = transform;
+        landscapeManager = GetComponent<LandscapeManager>();
+        // Create the lines
         lineRenderers = new LineRenderer[4];
-        for (int i = 0; i < 4; i++)
+        for ( int i = 0; i < 4; i++ )
         {
-            GameObject lineGameObject = (GameObject)Instantiate(lineRendererPrefab, cursor.transform);
+            GameObject lineGameObject = Instantiate( lineRendererPrefab, cursor.transform );
             LineRenderer lineRenderer = lineGameObject.GetComponent<LineRenderer>();
             lineRenderer.positionCount = 2;
             lineRenderer.enabled = false;
             lineRenderers[i] = lineRenderer;
         }
-        landscapeManager = GetComponent<LandscapeManager>();
     }
 
-    // Use this for initialization
     void Start()
     {
         potatoController = player.GetComponent<MovePotato>();
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
         // Get mouse input, and determine if the mouse has been clicked
@@ -57,10 +62,11 @@ public class LandscapeCursor : MonoBehaviour
         {
             if ( mouseDown )
             {
-                mouseDownPosition = new Vector3(mousePosition.x, mousePosition.y, mousePosition.z);
+                mouseDownPosition = new Vector3( mousePosition.x, mousePosition.y, mousePosition.z );
                 halfClick = true;
             }
-        } else if (mouseUp)
+        }
+        else if ( mouseUp )
         {
             // Make sure the down and up where in the same position
             // May need to make this less sensitive
@@ -78,7 +84,7 @@ public class LandscapeCursor : MonoBehaviour
         Vector3 mouseLocation = Vector3.zero;
 
         // Can't place turrets when we're moving
-        if (potatoController.IsRolling())
+        if ( potatoController.IsRolling() )
         {
             DisableLineRenderers();
         }
@@ -88,17 +94,17 @@ public class LandscapeCursor : MonoBehaviour
             Ray camRay = Camera.main.ScreenPointToRay(mousePosition);
             RaycastHit floorHit;
             // Use an if here, because it's possible the raycast won't hit the floor
-            if (Physics.Raycast(camRay, out floorHit, camRayLength, floorMask))
+            if ( Physics.Raycast( camRay, out floorHit, camRayLength, floorMask ) )
             {
                 mouseLocation = floorHit.point;
                 // First check if the point is close to the player
                 Vector3 playerPos = player.transform.position;
                 if ( player.transform.up.y < 0 )
-                {
+                { // player is upside down, adjust y
                     playerPos.y -= 2.7f;
                 }
-                float distance = Vector3.Distance(floorHit.point, playerPos);
-                if (distance > maxDistance || distance < minDistance)
+                float distance = Vector3.Distance( floorHit.point, playerPos );
+                if ( distance > maxDistance || distance < minDistance )
                 {
                     DisableLineRenderers();
                 }
@@ -117,12 +123,12 @@ public class LandscapeCursor : MonoBehaviour
                     // Cast rays at each corner to get the heights of each corner
                     RaycastHit[] hits = new RaycastHit[4];
 
-                    for (int i = 0; i < 4; i++)
+                    for ( int i = 0; i < 4; i++ )
                     {
-                        Ray corner = new Ray(new Vector3(corners[i][0], 10, corners[i][1]), Vector3.down);
+                        Ray corner = new Ray( new Vector3( corners[i][0], 10, corners[i][1] ), Vector3.down );
                         RaycastHit cornerHit;
                         // If the ray doesn't hit the floor, or the corner is not flat with the mouse point
-                        if (!Physics.Raycast(corner, out cornerHit, camRayLength, floorMask) || Mathf.Abs(cornerHit.point.y - floorHit.point.y) > 0.05f)
+                        if ( ! Physics.Raycast( corner, out cornerHit, camRayLength, floorMask ) || Mathf.Abs( cornerHit.point.y - floorHit.point.y ) > 0.05f )
                         {
                             DisableLineRenderers();
                             return;
@@ -131,10 +137,11 @@ public class LandscapeCursor : MonoBehaviour
                     }
 
                     // Reconfigure the line renderers with the new corners
-                    for (int i = 0; i < 4; i++)
+                    for ( int i = 0; i < 4; i++ )
                     {
-                        lineRenderers[i].SetPosition(0, new Vector3(corners[i][0], hits[i].point.y + smallUp, corners[i][1]));
-                        lineRenderers[i].SetPosition(1, new Vector3(corners[(i + 1) % 4][0], hits[(i + 1) % 4].point.y + smallUp, corners[(i + 1) % 4][1]));
+                        int j = (i + 1) % 4;
+                        lineRenderers[i].SetPosition( 0, new Vector3( corners[i][0], hits[i].point.y + smallUp, corners[i][1] ) );
+                        lineRenderers[i].SetPosition( 1, new Vector3( corners[j][0], hits[j].point.y + smallUp, corners[j][1] ) );
                     }
 
                     EnableLineRenderers();
@@ -142,7 +149,7 @@ public class LandscapeCursor : MonoBehaviour
                 }
             }
             else
-            {
+            { // Ray didn't hit the floor
                 DisableLineRenderers();
             }
         }
@@ -160,7 +167,7 @@ public class LandscapeCursor : MonoBehaviour
 
     private void DisableLineRenderers()
     {
-        for (int i = 0; i < 4; i++)
+        for ( int i = 0; i < 4; i++ )
         {
             lineRenderers[i].enabled = false;
         }
@@ -169,7 +176,7 @@ public class LandscapeCursor : MonoBehaviour
 
     private void EnableLineRenderers()
     {
-        for (int i = 0; i < 4; i++)
+        for ( int i = 0; i < 4; i++ )
         {
             lineRenderers[i].enabled = true;
         }

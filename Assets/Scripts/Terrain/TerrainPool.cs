@@ -29,7 +29,7 @@ public class TerrainPool : MonoBehaviour {
         inactiveTerrainContainer.transform.position = Vector3.down * TerrainHelper.Instance.heightScale * 3;
         inactiveTerrainContainer.SetActive(false);
         // Set up the pool
-        for (int s = 0; s < poolSize; s++)
+        for ( int s = 0; s < poolSize; s++ )
         {
             CreateNewTerrain();
         }
@@ -40,7 +40,7 @@ public class TerrainPool : MonoBehaviour {
      */
     public TerrainSquare RequestTerrain()
     {
-        if (inactiveTerrainPool.Count == 0)
+        if ( inactiveTerrainPool.Count == 0 )
         {
             CreateNewTerrain();
         }
@@ -54,7 +54,7 @@ public class TerrainPool : MonoBehaviour {
     /*
      * Give a terrain piece back
      */
-    public void ReturnTerrain(TerrainSquare tile)
+    public void ReturnTerrain( TerrainSquare tile )
     {
         tile.terrainMesh.transform.SetParent(inactiveTerrainContainer.transform);
         inactiveTerrainPool.Add(tile);
@@ -66,8 +66,8 @@ public class TerrainPool : MonoBehaviour {
     private void CreateNewTerrain()
     {
         float updateTime = Time.realtimeSinceStartup;
-        GameObject t = Instantiate<GameObject>(terrain, inactiveTerrainContainer.transform.position, Quaternion.identity, inactiveTerrainContainer.transform);
-        inactiveTerrainPool.Add(new TerrainSquare(t, updateTime));
+        GameObject t = Instantiate( terrain, inactiveTerrainContainer.transform.position, Quaternion.identity, inactiveTerrainContainer.transform );
+        inactiveTerrainPool.Add( new TerrainSquare( t, updateTime ) );
     }
 
 }

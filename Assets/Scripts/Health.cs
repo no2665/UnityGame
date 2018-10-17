@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * Stores the health of an entity.
+ */
 public class Health : MonoBehaviour {
 
     public Slider healthSlider;
@@ -22,7 +25,8 @@ public class Health : MonoBehaviour {
         UpdateUI();
     }
 
-    public void TakeHealth(float amount)
+    // Deals damage
+    public void TakeHealth( float amount )
     {
         currentHealth -= amount;
         if ( currentHealth < 0 )
@@ -32,7 +36,8 @@ public class Health : MonoBehaviour {
         UpdateUI();
     }
 
-    public void AddHealth(float amount)
+    // Heals
+    public void AddHealth( float amount )
     {
         currentHealth += amount;
         if ( currentHealth >= maxHealth )

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ * Creates and updates all of the turrets
+ */
 public class TurretManager : MonoBehaviour
 {
     public GameObject player;
@@ -13,17 +16,20 @@ public class TurretManager : MonoBehaviour
     public float energyPerTick = 2;
     public float secondsBetweenTicks = 1;
 
-    public static Dictionary<Turret.Type, float> turretCosts = new Dictionary<Turret.Type, float>()
+    // Energy costs for each turret
+    public static Dictionary< Turret.Type, float > turretCosts = new Dictionary< Turret.Type, float >()
     {
         { Turret.Type.GROW, 10 },
         { Turret.Type.BASIC, 15 },
         { Turret.Type.NONE, 0 },
     };
-    public static Dictionary<Turret.Type, Turret.Type[]> upgrades = new Dictionary<Turret.Type, Turret.Type[]>
+    // The upgrade flow chart. { Type1 -> { Type2, Type4 } }, { Type2 -> { Type3 } }
+    public static Dictionary< Turret.Type, Turret.Type[] > upgrades = new Dictionary< Turret.Type, Turret.Type[] >
     {
         { Turret.Type.GROW, new Turret.Type[1]{ Turret.Type.BASIC } }
     };
-    public static Dictionary<Turret.Type, GameObject> turretGameObjects;
+    // Holds the prefab gameobjects above
+    public static Dictionary<  Turret.Type, GameObject > turretGameObjects;
 
     private Hashtable turrets = new Hashtable();
     private float energy;
@@ -43,7 +49,8 @@ public class TurretManager : MonoBehaviour
 
         //potatoController = player.GetComponent<MovePotato>();
 
-        turretGameObjects = new Dictionary<Turret.Type, GameObject>
+        // Load the prefabs now they've got values
+        turretGameObjects = new Dictionary< Turret.Type, GameObject >
         {
             { Turret.Type.GROW, sprout },
             { Turret.Type.BASIC, basicTurret }
@@ -54,67 +61,71 @@ public class TurretManager : MonoBehaviour
     {
         float timeNow = Time.realtimeSinceStartup;
         if ( timeNow - lastEnergyAdded >= secondsBetweenTicks )
-        {
+        { // See if we can add energy
             energy += energyPerTick;
             lastEnergyAdded += secondsBetweenTicks;
         }
         if ( energy > energySlider.maxValue )
-        {
+        { // Stop it going too high
             energy = energySlider.maxValue;
         }
         energySlider.value = energy;
 
         // Update the turrets
-        foreach ( DictionaryEntry e in turrets )
+        foreach ( Turret t in turrets.Values )
         {
-            foreach ( DictionaryEntry t in (Hashtable) e.Value )
-            {
-                ((Turret)t.Value).FixedUpdate();
-            }
+            t.FixedUpdate();
         }
     }
 
-    public void HandleClick(Vector3 pos)
+    public void HandleClick( Vector3 pos )
     {
-        HandleClick(pos.x, pos.y, pos.z);
+        HandleClick( pos.x, pos.y, pos.z );
     }
 
-    public void HandleClick(float x, float y, float z)
+    public void HandleClick( float x, float y, float z )
     {
-        if (GetTurret(x, z) == Turret.Type.NONE) 
-        {
+        if ( GetTurret( x, z ) == Turret.Type.NONE ) 
+        { // Place a turret if there isn't one here already
             float cost = turretCosts[Turret.Type.GROW];
             if ( energy >= cost )
-            {
+            { // only if we have the energy
                 energy -= cost;
-                AddTurret(x, y, z);
+                AddTurret( x, y, z );
             }
         }
     }
 
-    public void AddTurret(float x, float y, float z)
+    /*
+     * Creates a new turret at x, y, z
+     */
+    public void AddTurret( float x, float y, float z )
     {
-        if (!turrets.ContainsKey(x) )
+        string name = GetTurretName( x, z );
+        if ( ! turrets.ContainsKey(name) )
         {
-            turrets[x] = new Hashtable();
+            turrets[name] = new Turret( this, sprout, Turret.Type.GROW, Mathf.FloorToInt(x), Mathf.FloorToInt(z), turretContainer.transform, y );
         }
-        ((Hashtable)turrets[x])[z] = new Turret(this, sprout, Turret.Type.GROW, Mathf.FloorToInt(x), Mathf.FloorToInt(z), turretContainer.transform, y);
     }
 
-    public Turret.Type GetTurret(float x, float z)
+    /*
+     * See if there is a turret at x, z
+     */
+    public Turret.Type GetTurret( float x, float z )
     {
-        if ( turrets.ContainsKey(x) )
+        string name = GetTurretName( x, z );
+        if ( turrets.ContainsKey(name) )
         {
-            Hashtable xTurrets = (Hashtable) turrets[x];
-            if ( xTurrets.ContainsKey(z) )
-            {
-                return ((Turret) xTurrets[z]).type;
-            }
+            return ((Turret) turrets[name]).type;
         }
         return Turret.Type.NONE;
     }
 
-    public bool TryUpgrade(Turret.Type to)
+    /*
+     * Returns true if we have enough energy to upgrade.
+     * Reduces the energy, so the upgrade can be performed
+     */
+    public bool TryUpgrade( Turret.Type to )
     {
         if ( turretCosts.ContainsKey(to) )
         {
@@ -126,5 +137,11 @@ public class TurretManager : MonoBehaviour
             }
         }
         return false;
+    }
+
+    // For easily storing the turrets in the hashtable
+    private string GetTurretName( float x, float z )
+    {
+        return "Turret_" + ((int) x).ToString() + "_" + ((int) z).ToString();
     }
 }

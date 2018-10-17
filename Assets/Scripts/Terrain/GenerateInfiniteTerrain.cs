@@ -31,14 +31,14 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
 
         // Create the initial terrain
         float updateTime = Time.realtimeSinceStartup;
-        for (int x = -halfTerrainWidth; x < halfTerrainWidth; x++)
+        for ( int x = -halfTerrainWidth; x < halfTerrainWidth; x++ )
         {
-            for (int z = -halfTerrainDepth; z < halfTerrainDepth; z++)
+            for ( int z = -halfTerrainDepth; z < halfTerrainDepth; z++ )
             {
-                Vector3 pos = new Vector3(x * tileSize + startPos.x, 0, z * tileSize + startPos.z);
+                Vector3 pos = new Vector3( x * tileSize + startPos.x, 0, z * tileSize + startPos.z );
                 TerrainSquare tile = pool.RequestTerrain();
                 tile.MoveTo(pos);
-                tiles.Add(tile.Name, tile);
+                tiles.Add( tile.Name, tile );
             }
         }
         shouldRebuildSurface = true;
@@ -47,14 +47,16 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
     private void Update()
     {
         if ( shouldRebuildSurface )
-        {
+        { // The terrain has changed so we have to updated the nav mesh surface
             shouldRebuildSurface = false;
             if ( firstBuild )
             {
                 firstBuild = false;
                 navSurface.BuildNavMesh();
-            } else
-            {
+            }
+            else
+            { // This function is slightly faster, but only works with an existing mesh,
+            // hence the first build above
                 navSurface.UpdateNavMesh(navSurface.navMeshData);
             }
         }
@@ -62,38 +64,39 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
 
     void FixedUpdate ()
     {
-        int xMove = (int)(player.transform.position.x - startPos.x);
-        int zMove = (int)(player.transform.position.z - startPos.z);
+        int xMove = (int) ( player.transform.position.x - startPos.x );
+        int zMove = (int) ( player.transform.position.z - startPos.z );
 
         // if we've moved the lenght of a tile
         if ( Mathf.Abs(xMove) >= tileSize || Mathf.Abs(zMove) >= tileSize )
         {
             float updateTime = Time.realtimeSinceStartup;
 
-            int playerX = (int)(Mathf.Floor(player.transform.position.x / tileSize) * tileSize);
-            int playerZ = (int)(Mathf.Floor(player.transform.position.z / tileSize) * tileSize);
+            int playerX = (int) ( Mathf.Floor(player.transform.position.x / tileSize) * tileSize );
+            int playerZ = (int) ( Mathf.Floor(player.transform.position.z / tileSize) * tileSize );
 
             // Move the water so it's always under the player
-            water.transform.position = new Vector3(playerX, -TerrainHelper.Instance.heightScale + TerrainHelper.Instance.waterLevel, playerZ);
+            water.transform.position = new Vector3( playerX, -TerrainHelper.Instance.heightScale + TerrainHelper.Instance.waterLevel, playerZ );
 
             // Look to move more terrain into place
             for ( int x = -halfTerrainWidth; x < halfTerrainWidth; x++ )
             {
                 for ( int z = -halfTerrainDepth; z < halfTerrainDepth; z++)
                 {
-                    Vector3 pos = new Vector3(x * tileSize + playerX, 0, z * tileSize + playerZ);
-                    string tilename = TerrainSquare.GenerateName(pos.x, pos.z);
+                    Vector3 pos = new Vector3( x * tileSize + playerX, 0, z * tileSize + playerZ );
+                    string tilename = TerrainSquare.GenerateName( pos.x, pos.z );
 
                     // if we don't have this terrain in place yet
                     if ( ! tiles.ContainsKey( tilename ) )
                     {
                         TerrainSquare tile = pool.RequestTerrain();
                         tile.MoveTo(pos);
-                        tiles.Add(tile.Name, tile);
-                    } else // terrain exists
+                        tiles.Add( tile.Name, tile );
+                    }
+                    else // terrain exists
                     {
                         // Update it's time still, so it won't be marked for deletion
-                        (tiles[tilename] as TerrainSquare).creationTime = updateTime;
+                        ( (TerrainSquare) tiles[tilename] ).creationTime = updateTime;
                     }
                 }
             }
@@ -102,13 +105,14 @@ public class GenerateInfiniteTerrain : MonoBehaviour {
             Hashtable newTerrain = new Hashtable();
             foreach ( TerrainSquare t in tiles.Values )
             {
-                if (t.creationTime < updateTime )
+                if ( t.creationTime < updateTime )
                 {
                     shouldRebuildSurface = true;
                     pool.ReturnTerrain(t);
-                } else
+                }
+                else
                 {
-                    newTerrain.Add(t.Name, t);
+                    newTerrain.Add( t.Name, t );
                 }
             }
             tiles = newTerrain;
