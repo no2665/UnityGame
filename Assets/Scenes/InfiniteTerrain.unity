@@ -725,6 +725,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1300310259}
   sprout: {fileID: 1213780253650006, guid: ab15a4f7cb350b54a80df0f823ac8524, type: 2}
+  basicTurret: {fileID: 1053118274715066, guid: 53b9173664e43fd44b55242bb1db5b3e,
+    type: 2}
   energySlider: {fileID: 2078245759}
   energyPerTick: 2
   secondsBetweenTicks: 1
@@ -1083,7 +1085,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4171434100166200, guid: a6c3a2e9db9bb68418eca78ae8b21e17, type: 2}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 2.5
       objectReference: {fileID: 0}
     - target: {fileID: 4171434100166200, guid: a6c3a2e9db9bb68418eca78ae8b21e17, type: 2}
       propertyPath: m_LocalPosition.z

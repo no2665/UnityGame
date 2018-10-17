@@ -5,33 +5,31 @@ using UnityEngine.UI;
 
 public class TurretManager : MonoBehaviour
 {
-
-    public enum TurretType
-    {
-        GROW,
-        BASIC,
-        NONE
-    }
     public GameObject player;
     public GameObject sprout;
+    public GameObject basicTurret;
+
     public Slider energySlider;
     public float energyPerTick = 2;
     public float secondsBetweenTicks = 1;
-    public Dictionary<TurretType, float> turretCosts = new Dictionary<TurretType, float>()
+
+    public static Dictionary<Turret.Type, float> turretCosts = new Dictionary<Turret.Type, float>()
     {
-        { TurretType.GROW, 10 },
-        { TurretType.BASIC, 15 },
-        { TurretType.NONE, 0 },
+        { Turret.Type.GROW, 10 },
+        { Turret.Type.BASIC, 15 },
+        { Turret.Type.NONE, 0 },
     };
+    public static Dictionary<Turret.Type, Turret.Type[]> upgrades = new Dictionary<Turret.Type, Turret.Type[]>
+    {
+        { Turret.Type.GROW, new Turret.Type[1]{ Turret.Type.BASIC } }
+    };
+    public static Dictionary<Turret.Type, GameObject> turretGameObjects;
 
     private Hashtable turrets = new Hashtable();
     private float energy;
     private float lastEnergyAdded;
 
     private GameObject turretContainer;
-
-    private float sproutOffsetX = 0.5f;
-    private float sproutOffsetZ = 0.5f;
     
     //private MovePotato potatoController;
 
@@ -44,6 +42,12 @@ public class TurretManager : MonoBehaviour
         turretContainer.transform.parent = transform;
 
         //potatoController = player.GetComponent<MovePotato>();
+
+        turretGameObjects = new Dictionary<Turret.Type, GameObject>
+        {
+            { Turret.Type.GROW, sprout },
+            { Turret.Type.BASIC, basicTurret }
+        };
     }
 
     public void FixedUpdate()
@@ -59,6 +63,15 @@ public class TurretManager : MonoBehaviour
             energy = energySlider.maxValue;
         }
         energySlider.value = energy;
+
+        // Update the turrets
+        foreach ( DictionaryEntry e in turrets )
+        {
+            foreach ( DictionaryEntry t in (Hashtable) e.Value )
+            {
+                ((Turret)t.Value).FixedUpdate();
+            }
+        }
     }
 
     public void HandleClick(Vector3 pos)
@@ -68,9 +81,9 @@ public class TurretManager : MonoBehaviour
 
     public void HandleClick(float x, float y, float z)
     {
-        if (GetTurret(x, z) == TurretType.NONE) 
+        if (GetTurret(x, z) == Turret.Type.NONE) 
         {
-            float cost = turretCosts[TurretType.GROW];
+            float cost = turretCosts[Turret.Type.GROW];
             if ( energy >= cost )
             {
                 energy -= cost;
@@ -85,20 +98,33 @@ public class TurretManager : MonoBehaviour
         {
             turrets[x] = new Hashtable();
         }
-        ((Hashtable)turrets[x])[z] = TurretType.GROW;
-        Instantiate(sprout, new Vector3( x + sproutOffsetX, y, z + sproutOffsetZ ), Quaternion.identity, turretContainer.transform);
+        ((Hashtable)turrets[x])[z] = new Turret(this, sprout, Turret.Type.GROW, Mathf.FloorToInt(x), Mathf.FloorToInt(z), turretContainer.transform, y);
     }
 
-    public TurretType GetTurret(float x, float z)
+    public Turret.Type GetTurret(float x, float z)
     {
         if ( turrets.ContainsKey(x) )
         {
             Hashtable xTurrets = (Hashtable) turrets[x];
             if ( xTurrets.ContainsKey(z) )
             {
-                return (TurretType) xTurrets[z];
+                return ((Turret) xTurrets[z]).type;
             }
         }
-        return TurretType.NONE;
+        return Turret.Type.NONE;
+    }
+
+    public bool TryUpgrade(Turret.Type to)
+    {
+        if ( turretCosts.ContainsKey(to) )
+        {
+            float cost = turretCosts[to];
+            if ( energy >= cost )
+            {
+                energy -= cost;
+                return true;
+            }
+        }
+        return false;
     }
 }

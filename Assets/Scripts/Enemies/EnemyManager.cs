@@ -36,7 +36,7 @@ public class EnemyManager : MonoBehaviour {
 
         for ( int i = 0; i < maxEnemies; i++ )
         {
-            GameObject e = Instantiate<GameObject>(enemy, Vector3.zero, Quaternion.identity, enemyContainer.transform);
+            GameObject e = Instantiate(enemy, Vector3.zero, Quaternion.identity, enemyContainer.transform);
             e.SetActive(false);
             inactiveEnemies.Add(e);
         }
@@ -78,6 +78,25 @@ public class EnemyManager : MonoBehaviour {
                     }
                 }
 
+            }
+        }
+
+        if ( activeEnemies.Count > 0 )
+        {
+            List<GameObject> toRemove = new List<GameObject>();
+            foreach ( GameObject enemy in activeEnemies )
+            {
+                if ( enemy.GetComponent<EnemyController>().IsDead() )
+                {
+                    enemy.SetActive(false);
+                    inactiveEnemies.Add(enemy);
+                    toRemove.Add(enemy);
+                }
+            }
+
+            foreach ( GameObject e in toRemove )
+            {
+                activeEnemies.Remove(e);
             }
         }
     }

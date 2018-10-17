@@ -5,8 +5,7 @@ using UnityEngine;
 public class Root {
 
     public int ID;
-    public int x;
-    public int z;
+    public int x, z;
 
     private GameObject root;
     private List<Root> neighbours;
@@ -14,11 +13,24 @@ public class Root {
     private static int lastID = -1;
     private static List<int> ids = new List<int>();
 
-    public Root(GameObject r, int xPos, int zPos)
+    private float offsetX = 0.5f;
+    private float offsetZ = 0.5f;
+
+    public Root(int xPos, int zPos)
     {
-        root = r;
         x = xPos;
         z = zPos;
+
+        neighbours = new List<Root>();
+        ID = SetID();
+    }
+
+    public Root(GameObject r, int xPos, int zPos, Transform parent, float yPos = 0)
+    {
+        x = xPos;
+        z = zPos;
+
+        root = MonoBehaviour.Instantiate(r, new Vector3(x + offsetX, yPos, z + offsetZ), Quaternion.AngleAxis(90, Vector3.right), parent);
 
         neighbours = new List<Root>();
         ID = SetID();
@@ -33,7 +45,10 @@ public class Root {
         neighbours = null;
         ids.Remove(ID);
         ID = -1;
-        MonoBehaviour.Destroy(root);
+        if (root != null)
+        {
+            MonoBehaviour.Destroy(root);
+        }
     }
     
     public List<Root> GetNeighbours()

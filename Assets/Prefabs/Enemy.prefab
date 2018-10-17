@@ -110,7 +110,7 @@ GameObject:
   - component: {fileID: 114598311036965986}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -122,7 +122,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1812391255501386}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3.002}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 224220846838777646}
@@ -258,8 +258,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   healthSlider: {fileID: 114242384824540800}
-  maxHealth: 100
-  currentHealth: 100
+  maxHealth: 20
+  startHealth: 20
+  currentHealth: 20
 --- !u!114 &114611535791585018
 MonoBehaviour:
   m_ObjectHideFlags: 1

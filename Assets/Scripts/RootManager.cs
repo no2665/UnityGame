@@ -15,9 +15,6 @@ public class RootManager : MonoBehaviour {
 
     private Hashtable roots = new Hashtable();
 
-    private float offsetX = 0.5f;
-    private float offsetZ = 0.5f;
-
     // Use this for initialization
     void Start () {
         startPos = transform.position;
@@ -74,7 +71,8 @@ public class RootManager : MonoBehaviour {
 
     public void FixedUpdate()
     {
-        foreach (DictionaryEntry xRoots in roots)
+        // Debug, draw graph
+        /*foreach (DictionaryEntry xRoots in roots)
         {
             foreach (DictionaryEntry de in (Hashtable)xRoots.Value)
             {
@@ -84,7 +82,7 @@ public class RootManager : MonoBehaviour {
                     Debug.DrawLine(new Vector3(r.x, 2, r.z), new Vector3(n.x, 2, n.z), Color.red);
                 }
             }
-        }
+        }*/
     }
 
     public bool CheckForRoot(Vector3 pos)
@@ -158,7 +156,7 @@ public class RootManager : MonoBehaviour {
     {
         int x = Mathf.RoundToInt(pos.x);
         int z = Mathf.RoundToInt(pos.z);
-        Root tempRoot = new Root(new GameObject("Temp"), x, z);
+        Root tempRoot = new Root(x, z);
         SetRootNeighbours(tempRoot, false);
         if ( tempRoot.GetNeighbours().Count == 0 )
         {
@@ -191,9 +189,7 @@ public class RootManager : MonoBehaviour {
         int z = Mathf.RoundToInt(pos.z);
         if ( ! CheckForRoot(pos) )
         {
-            Vector3 position = new Vector3(x + offsetX, pos.y, z + offsetZ);
-            GameObject rg = Instantiate(root, position, Quaternion.AngleAxis(90, Vector3.right), rootContainer.transform);
-            Root r = new Root(rg, x, z);
+            Root r = new Root(root, x, z, rootContainer.transform, pos.y);
             SetRootNeighbours(r, oneNeighbour);
 
             if (!roots.ContainsKey(x))
@@ -239,10 +235,8 @@ public class RootManager : MonoBehaviour {
                 for (int i = 0; i < potentialNeighbours.Count; i++)
                 {
                     Root n = potentialNeighbours[i];
-                    List<int> checkedIDs = new List<int>
-                {
-                    n.ID
-                };
+                    List<int> checkedIDs = new List<int>();
+                    checkedIDs.Add(n.ID);
                     CheckCloseNeighbours(n, potentialNeighbours, x, z, checkedIDs);
                     r.AddNeighbour(n);
                     n.AddNeighbour(r);
