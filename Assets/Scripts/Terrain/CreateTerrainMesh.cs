@@ -21,7 +21,7 @@ public class CreateTerrainMesh : MonoBehaviour {
         mesh.RecalculateBounds();
         mesh.RecalculateNormals();
 
-        gameObject.GetComponent<MeshFilter>().sharedMesh = mesh;
+        GetComponent<MeshFilter>().sharedMesh = mesh;
     }
 
     /*

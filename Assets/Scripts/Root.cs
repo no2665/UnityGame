@@ -40,7 +40,8 @@ public class Root {
         z = zPos;
 
         // Create the root here
-        root = MonoBehaviour.Instantiate( r, new Vector3( x + offsetX, yPos, z + offsetZ ), Quaternion.AngleAxis( 90, Vector3.right ), parent );
+        root = MonoBehaviour.Instantiate( r, new Vector3( x + offsetX, yPos, z + offsetZ ), Quaternion.identity, parent );
+        root.name = GetRootName( x, z );
 
         neighbours = new List<Root>();
         ID = SetID();
@@ -51,7 +52,7 @@ public class Root {
     {
         foreach ( Root r in neighbours )
         {
-            r.GetNeighbours().Remove(this);
+            r.RemoveNeighbour(this);
         }
         neighbours = null;
         ids.Remove(ID);
@@ -77,9 +78,26 @@ public class Root {
         return z;
     }
 
-    public void AddNeighbour( Root root )
+    public void AddNeighbour( Root r )
     {
-        neighbours.Add(root);
+        neighbours.Add(r);
+        if (root != null)
+        {
+            //Debug.Log("Regenerating mesh");
+            root.GetComponent<RootMesh>().RegenerateMesh(neighbours.ToArray());
+        } else
+        {
+            //Debug.Log("root is null");
+        }
+    }
+
+    public void RemoveNeighbour( Root r)
+    {
+        neighbours.Remove(r);
+        if ( root != null )
+        {
+            root.GetComponent<RootMesh>().RegenerateMesh(neighbours.ToArray());
+        }
     }
 
     // Stub method. May be needed later for pooling.
@@ -98,6 +116,11 @@ public class Root {
     public static List<int> GetIDs()
     {
         return ids;
+    }
+
+    public static string GetRootName( int x, int z )
+    {
+        return "Root_" + x.ToString() + "_" + z.ToString();
     }
     
 }

@@ -99,7 +99,7 @@ public class RootManager : MonoBehaviour {
     {
         int x = Mathf.RoundToInt(pos.x);
         int z = Mathf.RoundToInt(pos.z);
-        string name = GetRootName( x, z );
+        string name = Root.GetRootName( x, z );
         if ( roots.ContainsKey(name) )
         {
             return ( (Root) roots[name] ).IsEnabled();
@@ -177,7 +177,7 @@ public class RootManager : MonoBehaviour {
     {
         int x = Mathf.RoundToInt(pos.x);
         int z = Mathf.RoundToInt(pos.z);
-        string name = GetRootName( x, z );
+        string name = Root.GetRootName( x, z );
         // Create a dummy root at pos
         Root tempRoot = new Root( x, z );
         // Add the root to the graph
@@ -211,7 +211,7 @@ public class RootManager : MonoBehaviour {
     {
         int x = Mathf.RoundToInt(pos.x);
         int z = Mathf.RoundToInt(pos.z);
-        string name = GetRootName( x, z );
+        string name = Root.GetRootName( x, z );
         // Make sure there isn't an existing root
         if ( ! CheckForRoot(pos) )
         {
@@ -238,7 +238,7 @@ public class RootManager : MonoBehaviour {
         {
             for ( int iz = z - 1; iz <= z + 1; iz++ )
             {
-                string name = GetRootName( ix, iz );
+                string name = Root.GetRootName( ix, iz );
                 if ( roots.ContainsKey(name) )
                 {
                     potentialNeighbours.Add( (Root) roots[name] );
@@ -295,11 +295,5 @@ public class RootManager : MonoBehaviour {
                 CheckCloseNeighbours( nn, neighbours, x, z, ignoreID );
             }
         }
-    }
-
-    // Method for easily storing the roots in the hashtable
-    private string GetRootName( int x, int z )
-    {
-        return "Root_" + x.ToString() + "_" + z.ToString();
     }
 }
